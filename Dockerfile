@@ -10,7 +10,7 @@ RUN npm install
 COPY . .
 
 # Expose portul pe care rulează aplicația
-EXPOSE 4200
+EXPOSE 8080
 
 # Comanda pentru a porni aplicația Angular
 CMD ["npm", "start", "--", "--port", "8080"]
