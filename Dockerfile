@@ -13,4 +13,6 @@ COPY . .
 EXPOSE 4200
 
 # Comanda pentru a porni aplicația Angular
-CMD ["npm", "start"]
+CMD ["npm", "start", "--", "--port", "8080"]
+
+#new
