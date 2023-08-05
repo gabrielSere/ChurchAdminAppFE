@@ -1,18 +1,26 @@
-# Utilizați o imagine de bază Node.js
-FROM node:14
+# Etapa 1: Construirea aplicației Angular
+FROM node:16 AS builder
 
-# Setați directorul de lucru în container
+# Setare director de lucru
 WORKDIR /app
 
-# Copiați fișierele de dependență și codul sursă în directorul de lucru
+# Copiere fișiere de proiect și instalare dependențe
 COPY package*.json ./
-RUN npm install
+RUN npm cache clean --force
+RUN npm install --legacy-peer-deps
 COPY . .
 
-# Expose portul pe care rulează aplicația (asigurați-vă că este același ca în angular.json)
+# Compilare aplicație Angular
+RUN npm run build
+
+# Etapa 2: Utilizarea serverului Nginx pentru a servi aplicația Angular
+FROM nginx:alpine
+
+# Copierea fișierelor construite în imaginea Nginx
+COPY --from=builder /app/dist/fuse /usr/share/nginx/html
+
+# Expunere port 80 pentru acces la aplicație în container
 EXPOSE 8080
 
-# Comanda pentru a porni aplicația Angular (asigurați-vă că ascultă pe portul 8080)
-CMD ["ng", "serve", "--port", "8080", "--host", "0.0.0.0"]
-
-#new
+# Comandă pentru pornirea serverului Nginx
+CMD ["nginx", "-g", "daemon off;"]
